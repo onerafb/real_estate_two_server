@@ -2,13 +2,15 @@ import bcryptjs from "bcryptjs";
 import User from "../model/user_model.js";
 import Listing from "../model/listing_model.js";
 import { errorHandler } from "../utils/error.js";
+import { json } from "express";
 
 export const updateUser = async (req, res, next) => {
-  if (req.user.id !== req.params.id)
-    return next(errorHandler(401, "You can only update your own account!"));
+  // if (req.user.id !== req.params.id)
+  //   return next(errorHandler(401, "You can only update your own account!"));
+  // console.log(req.params.id);
   try {
     if (req.body.password) {
-      req.body.password = bcryptjs.hash(req.body.password, 10);
+      req.body.password = await bcryptjs.hash(req.body.password, 10);
     }
 
     const updatedUser = await User.findByIdAndUpdate(
@@ -18,7 +20,6 @@ export const updateUser = async (req, res, next) => {
           username: req.body.username,
           email: req.body.email,
           password: req.body.password,
-          avatar: req.body.avatar,
         },
       },
       { new: true }
@@ -45,14 +46,25 @@ export const deleteUser = async (req, res, next) => {
 };
 
 export const getUserListings = async (req, res, next) => {
-  if (req.user.id === req.params.id) {
-    try {
-      const listings = await Listing.find({ userRef: req.params.id });
-      res.status(200).json(listings);
-    } catch (error) {
-      next(error);
-    }
-  } else {
-    return next(errorHandler(401, "CAN ONLY VIEW YOUR OWN LISTING!"));
+  try {
+    const listings = await Listing.find({ userRef: req.params.id });
+    res.status(200).json(listings);
+  } catch (error) {
+    next(error);
   }
+};
+
+export const adminUser = async (req, res, next) => {
+  const users = await User.find({});
+
+  res.status(200).json({
+    success: true,
+    users,
+  });
+};
+export const adminDeleteUser = async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  if (!user) return next(errorHandler(404, "USER NOT FOUND"));
+  await user.deleteOne();
+  res.status(200).json({ message: "USER DELETED SUCCESSFULLY" });
 };

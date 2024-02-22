@@ -55,13 +55,14 @@ export const signin = async (req, res, next) => {
     const { password: pass, ...rest } = vUser._doc;
 
     res
-      .cookie("cookie_token", token, {
-        httpOnly: true,
-      })
+     .cookie("cookie_token", token, {
+    httpOnly: true,
+    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // expires in 7 days
+  })
       .status(201)
       .json({
         success: true,
-        message: "SIGNIN SUCCESSFULL!",
+        message: "SIGN-IN SUCCESSFULL!",
         rest,
       });
   } catch (error) {

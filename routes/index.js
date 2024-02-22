@@ -5,10 +5,8 @@ import userRoute from "./user_route.js";
 
 const router = express.Router();
 
-router.use("/auth", authRoute);
-router.use("/listing", listingRoute);
-router.use("/user", userRoute);
+router.use("/api/auth", authRoute);
+router.use("/api/listing", listingRoute);
+router.use("/api/user", userRoute);
 
 export default router;
-
-
