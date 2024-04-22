@@ -6,7 +6,6 @@ import { createJWT, hashString } from "../utils/other.js";
 export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
 
-  //validate fileds
   try {
     if (!username || !email || !password) {
       return next(errorHandler(401, "SOME INPUT FIELD ARE EMPTY!!"));

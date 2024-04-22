@@ -3,12 +3,15 @@ import dotenv from "dotenv";
 import router from "./routes/index.js";
 import dbConnection from "./dbConfig/db.js";
 import cookieParser from "cookie-parser";
+import path from "path";
 
 dotenv.config();
 
 const app = express();
 
 const PORT = process.env.PORT || 8800;
+
+const __dirname = path.resolve();
 
 app.use(express.json());
 app.use(cookieParser());
@@ -17,8 +20,10 @@ app.use(router);
 
 dbConnection();
 
-app.get("/", (req, res) => {
-  res.send("Home");
+app.use(express.static(path.join(__dirname, "/real_cln/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "real_cln", "dist", "index.html"));
 });
 
 //!error middleware
